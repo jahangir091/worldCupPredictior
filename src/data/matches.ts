@@ -1,7 +1,7 @@
 import type { Match } from '../types'
 
 /** Bundled snapshot — refreshed live via reload button */
-export const SNAPSHOT_DATE = '2026-06-23'
+export const SNAPSHOT_DATE = '2026-06-24'
 
 const m = (
   id: number,
@@ -72,10 +72,10 @@ export const BASE_GROUP_MATCHES: Match[] = [
   // Matchday 3 (partial — through June 23 morning results)
   m(43, '2026-06-23', '18:00', 'NOR', 'SEN', 'toronto', { group: 'I', homeScore: 3, awayScore: 2, status: 'finished' }),
   m(44, '2026-06-23', '18:00', 'JOR', 'ALG', 'santa_clara', { group: 'J', homeScore: 1, awayScore: 2, status: 'finished' }),
-  m(45, '2026-06-23', '18:00', 'POR', 'UZB', 'houston', { group: 'K' }),
-  m(46, '2026-06-23', '21:00', 'ENG', 'GHA', 'boston', { group: 'L' }),
-  m(47, '2026-06-24', '00:00', 'PAN', 'CRO', 'foxborough', { group: 'L' }),
-  m(48, '2026-06-24', '03:00', 'COL', 'COD', 'zapopan', { group: 'K' }),
+  m(45, '2026-06-23', '18:00', 'POR', 'UZB', 'houston', { group: 'K', homeScore: 5, awayScore: 0, status: 'finished' }),
+  m(46, '2026-06-23', '21:00', 'ENG', 'GHA', 'boston', { group: 'L', homeScore: 0, awayScore: 0, status: 'finished' }),
+  m(47, '2026-06-24', '00:00', 'PAN', 'CRO', 'foxborough', { group: 'L', homeScore: 0, awayScore: 1, status: 'finished' }),
+  m(48, '2026-06-24', '03:00', 'COL', 'COD', 'zapopan', { group: 'K', homeScore: 1, awayScore: 0, status: 'finished' }),
   m(49, '2026-06-24', '20:00', 'SUI', 'CAN', 'vancouver', { group: 'B' }),
   m(50, '2026-06-24', '20:00', 'BIH', 'QAT', 'seattle', { group: 'B' }),
   m(51, '2026-06-24', '23:00', 'MAR', 'HAI', 'atlanta', { group: 'C' }),
@@ -122,7 +122,7 @@ export const KNOCKOUT_TEMPLATE: Omit<Match, 'homeId' | 'awayId' | 'status'>[] = 
   { id: 86, date: '2026-07-03', time: '23:00', round: 'r32', stadiumId: 'miami', bracketLabel: '1J vs 2H' },
   { id: 87, date: '2026-07-04', time: '02:30', round: 'r32', stadiumId: 'kansas_city', bracketLabel: '1K vs 3rd (D/E/I/J/L)' },
   { id: 88, date: '2026-07-03', time: '19:00', round: 'r32', stadiumId: 'arlington', bracketLabel: '2D vs 2G' },
-  { id: 89, date: '2026-07-04', time: '22:00', round: 'r32', stadiumId: 'philadelphia', bracketLabel: 'W74 vs W77' },
+  { id: 89, date: '2026-07-04', time: '22:00', round: 'r16', stadiumId: 'philadelphia', bracketLabel: 'W74 vs W77' },
   { id: 90, date: '2026-07-04', time: '18:00', round: 'r16', stadiumId: 'houston', bracketLabel: 'W73 vs W75' },
   { id: 91, date: '2026-07-05', time: '21:00', round: 'r16', stadiumId: 'new_jersey', bracketLabel: 'W76 vs W78' },
   { id: 92, date: '2026-07-06', time: '01:00', round: 'r16', stadiumId: 'mexico_city', bracketLabel: 'W79 vs W80' },

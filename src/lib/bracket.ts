@@ -3,6 +3,7 @@ import { KNOCKOUT_TEMPLATE } from '../data/matches'
 import { getTeam } from '../data/teams'
 import { computeAllStandings, getQualifiedTeams, isGroupComplete } from './standings'
 import { pickWinnerByAlgorithm } from './prediction'
+import { assignThirdPlaceTeams, getThirdForMatch } from './thirdPlace'
 
 interface BracketContext {
   customResults: Record<number, { homeScore: number; awayScore: number }>
@@ -10,19 +11,12 @@ interface BracketContext {
   useAlgorithm: boolean
 }
 
-function resolveThirdPlace(
-  thirds: { teamId: string; group: string }[],
-  allowedGroups: string[]
-): string | undefined {
-  const eligible = thirds.filter((t) => allowedGroups.includes(t.group))
-  return eligible[0]?.teamId
-}
-
 function resolveSlot(
   slot: string,
+  matchId: number,
   winners: Record<string, string>,
   runners: Record<string, string>,
-  thirds: { teamId: string; group: string }[]
+  thirdPlaceByMatch: Record<number, string>
 ): string | undefined {
   const winnerMatch = slot.match(/^1([A-L])$/)
   if (winnerMatch) return winners[winnerMatch[1]]
@@ -30,10 +24,8 @@ function resolveSlot(
   const runnerMatch = slot.match(/^2([A-L])$/)
   if (runnerMatch) return runners[runnerMatch[1]]
 
-  const thirdMatch = slot.match(/^3rd \(([A-L/]+)\)$/)
-  if (thirdMatch) {
-    const groups = thirdMatch[1].split('/')
-    return resolveThirdPlace(thirds, groups)
+  if (slot.startsWith('3rd (')) {
+    return getThirdForMatch(matchId, thirdPlaceByMatch)
   }
 
   return undefined
@@ -85,6 +77,7 @@ export function buildBracket(ctx: BracketContext, groupMatches: Match[]): Bracke
   }
 
   const { winners, runners, thirds } = getQualifiedTeams(allStandings, groupComplete)
+  const thirdPlaceByMatch = assignThirdPlaceTeams(thirds)
   const winnerMap: Record<number, string> = { ...ctx.knockoutWinners }
 
   const bracket: BracketMatch[] = []
@@ -96,17 +89,10 @@ export function buildBracket(ctx: BracketContext, groupMatches: Match[]): Bracke
     if (template.id <= 88) {
       const slots = R32_SLOTS[template.id]
       if (slots) {
-        homeTeamId = resolveSlot(slots[0], winners, runners, thirds)
-        awayTeamId = resolveSlot(slots[1], winners, runners, thirds)
+        homeTeamId = resolveSlot(slots[0], template.id, winners, runners, thirdPlaceByMatch)
+        awayTeamId = resolveSlot(slots[1], template.id, winners, runners, thirdPlaceByMatch)
       }
     } else if (template.id === 103) {
-      const feeders = KNOCKOUT_FEEDERS[103]
-      const w101 = winnerMap[feeders[0]]
-      const w102 = winnerMap[feeders[1]]
-      // Losers of semis — simplified: non-winners from semi pairs
-      homeTeamId = w101 ? undefined : undefined
-      awayTeamId = w102 ? undefined : undefined
-      // For third place, use algorithm losers if we track them
       const semi1 = KNOCKOUT_FEEDERS[101]
       const semi2 = KNOCKOUT_FEEDERS[102]
       const s1w = winnerMap[101]
