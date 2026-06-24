@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-wc-navy: #0a1628;
+  --color-wc-gold: #f5c518;
+  --color-wc-green: #00a651;
+  --color-wc-card: #111d32;
+  --color-wc-border: #1e3050;
+  --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+body {
+  @apply bg-wc-navy text-slate-100 antialiased min-h-screen;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-wc-navy);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-wc-border);
+  border-radius: 4px;
+}
