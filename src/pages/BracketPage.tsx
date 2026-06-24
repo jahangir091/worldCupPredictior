@@ -29,7 +29,7 @@ export function BracketPage() {
         <div>
           <h1 className="text-2xl font-bold">Knockout Bracket</h1>
           <p className="text-slate-400 text-sm mt-1">
-            Pick winners manually or let the prediction algorithm fill gaps. Group results feed Round of 32 slots.
+            Full bracket filled via data analysis — remaining group games projected, then each knockout winner predicted.
           </p>
         </div>
         <div className="flex flex-wrap gap-3 items-center">
@@ -102,17 +102,25 @@ function BracketMatchCard({
   const stadium = getStadium(match.stadiumId)
   const winner = userPick ?? match.winnerId
   const canPick = match.homeTeamId && match.awayTeamId
+  const isAiPick = !userPick && !!match.winnerId
 
   return (
     <div className="bg-wc-navy/50 border border-wc-border rounded-lg p-3">
       <div className="flex justify-between items-start mb-2">
         <span className="text-xs text-slate-500">{match.label}</span>
-        <span className="text-xs text-slate-500">{new Date(match.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+        <div className="text-right">
+          {isAiPick && <span className="text-xs text-wc-gold block">AI pick</span>}
+          <span className="text-xs text-slate-500">{new Date(match.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+        </div>
       </div>
 
       {!canPick ? (
         <div className="text-sm text-slate-500 py-4 text-center">
-          <div>{match.homeSlot || 'TBD'} vs {match.awaySlot || 'TBD'}</div>
+          <div>
+            {match.homeTeamId ? <TeamBadge teamId={match.homeTeamId} size="sm" /> : match.homeSlot || 'TBD'}
+            {' vs '}
+            {match.awayTeamId ? <TeamBadge teamId={match.awayTeamId} size="sm" /> : match.awaySlot || 'TBD'}
+          </div>
           <div className="text-xs mt-1">Awaiting group stage</div>
         </div>
       ) : (

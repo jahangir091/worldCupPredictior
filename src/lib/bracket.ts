@@ -1,9 +1,10 @@
 import type { BracketMatch, Match } from '../types'
 import { KNOCKOUT_TEMPLATE } from '../data/matches'
 import { getTeam } from '../data/teams'
-import { computeAllStandings, getQualifiedTeams, isGroupComplete } from './standings'
+import { computeAllStandings, getQualifiedTeams } from './standings'
 import { pickWinnerByAlgorithm } from './prediction'
 import { assignThirdPlaceTeams, getThirdForMatch } from './thirdPlace'
+import { mergeProjectedResults, projectRemainingGroupResults } from './groupProjection'
 
 interface BracketContext {
   customResults: Record<number, { homeScore: number; awayScore: number }>
@@ -70,14 +71,35 @@ const KNOCKOUT_FEEDERS: Record<number, [number, number]> = {
 }
 
 export function buildBracket(ctx: BracketContext, groupMatches: Match[]): BracketMatch[] {
-  const allStandings = computeAllStandings(groupMatches, ctx.customResults)
+  const projected = ctx.useAlgorithm
+    ? projectRemainingGroupResults(groupMatches, ctx.customResults)
+    : {}
+  const effectiveResults = mergeProjectedResults(ctx.customResults, projected)
+
+  const allStandings = computeAllStandings(groupMatches, effectiveResults)
   const groupComplete: Record<string, boolean> = {}
   for (const group of Object.keys(allStandings)) {
-    groupComplete[group] = isGroupComplete(group, groupMatches, ctx.customResults)
+    groupComplete[group] = allStandings[group]?.length >= 3
   }
 
   const { winners, runners, thirds } = getQualifiedTeams(allStandings, groupComplete)
-  const thirdPlaceByMatch = assignThirdPlaceTeams(thirds)
+
+  // Include all 12 third-place teams for assignment, then take top 8 qualifiers
+  const allThirds: typeof thirds = []
+  for (const [group, standings] of Object.entries(allStandings)) {
+    if (standings.length >= 3) {
+      allThirds.push({ ...standings[2], group })
+    }
+  }
+  allThirds.sort((a, b) => {
+    if (b.points !== a.points) return b.points - a.points
+    if (b.gd !== a.gd) return b.gd - a.gd
+    if (b.gf !== a.gf) return b.gf - a.gf
+    return a.teamId.localeCompare(b.teamId)
+  })
+  const qualifyingThirds = allThirds.slice(0, 8)
+
+  const thirdPlaceByMatch = assignThirdPlaceTeams(qualifyingThirds)
   const winnerMap: Record<number, string> = { ...ctx.knockoutWinners }
 
   const bracket: BracketMatch[] = []
@@ -111,16 +133,16 @@ export function buildBracket(ctx: BracketContext, groupMatches: Match[]): Bracke
       }
     }
 
-    if (homeTeamId && awayTeamId && !winnerMap[template.id]) {
-      if (ctx.useAlgorithm && !ctx.knockoutWinners[template.id]) {
-        const home = getTeam(homeTeamId)
-        const away = getTeam(awayTeamId)
-        winnerMap[template.id] = pickWinnerByAlgorithm(home, away, groupMatches, ctx.customResults)
-      }
-    }
-
-    if (ctx.knockoutWinners[template.id]) {
-      winnerMap[template.id] = ctx.knockoutWinners[template.id]
+    const userPick = ctx.knockoutWinners[template.id]
+    if (userPick) {
+      winnerMap[template.id] = userPick
+    } else if (homeTeamId && awayTeamId && ctx.useAlgorithm) {
+      winnerMap[template.id] = pickWinnerByAlgorithm(
+        getTeam(homeTeamId),
+        getTeam(awayTeamId),
+        groupMatches,
+        effectiveResults
+      )
     }
 
     bracket.push({
