@@ -10,7 +10,7 @@ import { PredictPage } from './pages/PredictPage'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/worldCupPredictior">
       <SimulationProvider>
         <Routes>
           <Route element={<Layout />}>
