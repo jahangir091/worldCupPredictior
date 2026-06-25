@@ -6,6 +6,7 @@ const nav = [
   { to: '/groups', label: 'Groups', icon: '📊' },
   { to: '/schedule', label: 'Schedule', icon: '📅' },
   { to: '/bracket', label: 'Bracket', icon: '🏆' },
+  { to: '/bracket-tree', label: 'Bracket Tree', icon: '🌳' },
   { to: '/teams', label: 'Teams', icon: '⚽' },
   { to: '/predict', label: 'Predict', icon: '🎯' },
 ]
@@ -64,7 +65,7 @@ export function Layout() {
           ))}
         </nav>
       </header>
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">
+      <main className="flex-1 w-full px-4 py-6 mx-auto max-w-[100rem]">
         <Outlet />
       </main>
       <footer className="border-t border-wc-border py-4 text-center text-xs text-slate-500">
