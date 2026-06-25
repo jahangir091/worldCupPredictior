@@ -5,6 +5,7 @@ import { DashboardPage } from './pages/DashboardPage'
 import { GroupsPage } from './pages/GroupsPage'
 import { SchedulePage } from './pages/SchedulePage'
 import { BracketPage } from './pages/BracketPage'
+import { VisualBracketPage } from './pages/VisualBracketPage'
 import { TeamsPage } from './pages/TeamsPage'
 import { PredictPage } from './pages/PredictPage'
 
@@ -18,6 +19,7 @@ export default function App() {
             <Route path="groups" element={<GroupsPage />} />
             <Route path="schedule" element={<SchedulePage />} />
             <Route path="bracket" element={<BracketPage />} />
+            <Route path="bracket-tree" element={<VisualBracketPage />} />
             <Route path="teams" element={<TeamsPage />} />
             <Route path="predict" element={<PredictPage />} />
           </Route>

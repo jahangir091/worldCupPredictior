@@ -13,6 +13,46 @@ body {
   @apply bg-wc-navy text-slate-100 antialiased min-h-screen;
 }
 
+.visual-bracket-shell {
+  background: linear-gradient(180deg, rgba(15, 28, 48, 0.95) 0%, rgba(8, 16, 28, 0.98) 100%);
+}
+
+/* Scale bracket to fit laptop viewports without scroll */
+.visual-bracket-fit {
+  overflow: visible;
+}
+
+@media (max-width: 1400px) {
+  .visual-bracket-fit {
+    transform: scale(0.92);
+    transform-origin: top center;
+  }
+}
+
+@media (max-width: 1280px) {
+  .visual-bracket-fit {
+    transform: scale(0.84);
+    transform-origin: top center;
+  }
+}
+
+@media (max-width: 1100px) {
+  .visual-bracket-fit {
+    transform: scale(0.76);
+    transform-origin: top center;
+  }
+}
+
+.bracket-tree-page {
+  max-width: none;
+  padding-top: 0.5rem;
+  padding-bottom: 1rem;
+}
+
+.bracket-tree-page .page-toolbar {
+  margin-bottom: 0.75rem;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
